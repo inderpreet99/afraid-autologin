@@ -5,6 +5,7 @@
 * Run this script using cron every few months:
 	`source bin/activate && python autologin.py`
 * Uses firefox to go through the site. You may optionally install PhantomJS to use with the `--browser` flag.
+* Can be run using a virtual display for headless systems by passing the `--headless` flag.
 
 ## Setting Up
 

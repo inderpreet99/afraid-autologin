@@ -33,7 +33,17 @@ def main():
     parser.add_argument('--verbose', action='store_true',
                         help='show extra output')
 
+    parser.add_argument('--headless', action='store_true', help='initialise a \
+                        virtual display for headless systems')
+
     args = parser.parse_args()
+
+    # init virtual display, if required
+    if args.headless:
+        from pyvirtualdisplay import Display
+        
+        display = Display(visible=0, size=(1366, 768))
+        display.start()
 
     # setup browser
     if args.browser == 'phantomjs':
