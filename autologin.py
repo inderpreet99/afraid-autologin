@@ -1,24 +1,39 @@
 #!/usr/bin/env python
-from __future__ import print_function
 from selenium import webdriver
 import argparse
 import os
 import sys
 import time
 import random
+import logging
+
+# init logging to stdout and file
+logger = logging.getLogger('afraid-autologin')
+logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s >>> %(levelname)s: %(message)s')
+
+file_logger = logging.FileHandler('afraid-autologin.log')
+file_logger.setFormatter(formatter)
+logger.addHandler(file_logger)
+
+stdout_logger = logging.StreamHandler(sys.stdout)
+stdout_logger.setFormatter(formatter)
+logger.addHandler(stdout_logger)
+
+logger.debug('afraid-autologin startup')
 
 try:
     from settings import USERNAME, PASSWORD, URL
     if USERNAME == "" or PASSWORD == "":
         raise ImportError
 except ImportError:
-    print("You need the username and password in the settings.py file:")
-    print("USERNAME = 'my_username_here'")
-    print("PASSWORD = 'my_password_here'")
+    logger.error("You need the username and password in the settings.py file:")
+    logger.error("USERNAME = 'my_username_here'")
+    logger.error("PASSWORD = 'my_password_here'")
     sys.exit(-1)
 
-
-def main():
+def main(logger):
 
     parser = argparse.ArgumentParser(description=' \
         Logs in freedns.afraid.org using USERNAME/PASSWORD from settings.py. \
@@ -38,30 +53,30 @@ def main():
 
     args = parser.parse_args()
 
-    # init virtual display, if required
     if args.headless:
+        logger.debug('init virtual display')
         from pyvirtualdisplay import Display
         
         display = Display(visible=0, size=(1366, 768))
         display.start()
 
-    # setup browser
+    logger.debug('init browser')
     if args.browser == 'phantomjs':
         browser = webdriver.PhantomJS()
     else:
         profile = webdriver.FirefoxProfile()
         profile.set_preference("browser.download.folderList", 2)
-        # profile.set_preference("javascript.enabled", False)
+
         browser = webdriver.Firefox(firefox_profile=profile)
 
     browser.get(URL)
     time.sleep(random.randint(1,3))
 
-    # go to login page
+    logger.debug('navigating to login page')
     browser.find_element_by_link_text("Domains").click()
     time.sleep(random.randint(1,3))
 
-    # fill in login details
+    logger.debug('submit login form')
     username_field = browser.find_element_by_name('username')
     password_field = browser.find_element_by_name('password')
     username_field.send_keys(USERNAME)
@@ -72,7 +87,20 @@ def main():
     # view the subdomains
     browser.find_element_by_link_text("Subdomains").click()
 
+    # check whether login was successful
+    # 'Last IP' is only shown after login
+    success = 'Last IP' in browser.page_source
+    if success:
+        logger.info('login sucessful')
+    else:
+        logger.error('login unsuccessful')
+
     browser.quit()
 
+    exit_code = 0
+    if not success:
+        exit_code = -1
+    exit(exit_code)
+
 if __name__ == "__main__":
-    main()
+    main(logger)
