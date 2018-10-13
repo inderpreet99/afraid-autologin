@@ -24,7 +24,7 @@ logger.addHandler(stdout_logger)
 logger.debug('afraid-autologin startup')
 
 try:
-    from settings import USERNAME, PASSWORD, URL
+    from settings import USERNAME, PASSWORD, URL , URL_DORMANT , URL_DORMANT_EXTEND
     if USERNAME == "" or PASSWORD == "":
         raise ImportError
 except ImportError:
@@ -83,7 +83,22 @@ def main(logger):
     password_field.send_keys(PASSWORD)
     browser.find_element_by_name('submit').click()
     time.sleep(random.randint(1,3))
+    logger.debug('extending account if dormant');
+    browser.get(URL_DORMANT);
 
+#    https://freedns.afraid.org/dormant/
+#    https://freedns.afraid.org/dormant/?action=extend
+    buttons = browser.find_elements_by_xpath("//input[@type='submit']") 
+    logger.debug(buttons)
+    for input in buttons:                                                             
+    #print attribute name of each input element 
+       print input.get_attribute('value')
+       if input.get_attribute('value') == "Extend your account" :
+	    input.click()
+	    break
+    browser.get(URL_DORMANT_EXTEND);
+ 
+    time.sleep(random.randint(1,3))
     # view the subdomains
     browser.find_element_by_link_text("Subdomains").click()
 
