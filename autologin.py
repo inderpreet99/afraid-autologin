@@ -111,6 +111,8 @@ def main(logger):
         logger.error('login unsuccessful')
 
     browser.quit()
+    if args.headless:
+        display.stop()
 
     exit_code = 0
     if not success:
