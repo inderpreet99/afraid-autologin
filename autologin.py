@@ -22,7 +22,6 @@ stdout_logger.setFormatter(formatter)
 logger.addHandler(stdout_logger)
 
 logger.debug('afraid-autologin startup')
-
 try:
     from settings import USERNAME, PASSWORD, URL , URL_DORMANT , URL_DORMANT_EXTEND
     if USERNAME == "" or PASSWORD == "":
@@ -92,10 +91,10 @@ def main(logger):
     logger.debug(buttons)
     for input in buttons:                                                             
     #print attribute name of each input element 
-       print input.get_attribute('value')
+    #    print input.get_attribute('value')
        if input.get_attribute('value') == "Extend your account" :
-	    input.click()
-	    break
+	        input.click()
+	        break
     browser.get(URL_DORMANT_EXTEND);
  
     time.sleep(random.randint(1,3))
