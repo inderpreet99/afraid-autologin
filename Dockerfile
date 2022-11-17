@@ -1,8 +1,9 @@
-FROM python:3.8-slim-buster
+FROM python:3.8
 
 SHELL ["/bin/bash", "-c"]
 RUN echo "deb http://deb.debian.org/debian/ unstable main contrib non-free" >> /etc/apt/sources.list.d/debian.list
-RUN apt-get update && apt-get install -y cron xvfb firefox wget vim
+RUN apt-get update
+RUN apt-get install -y cron xvfb firefox wget
 RUN wget -c https://github.com/mozilla/geckodriver/releases/download/v0.23.0/geckodriver-v0.23.0-linux64.tar.gz && tar -xzf geckodriver-v0.23.0-linux64.tar.gz -C /usr/local/bin/
 RUN chown root:root /usr/local/bin/geckodriver
 
