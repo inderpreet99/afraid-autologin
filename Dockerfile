@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM python:3.8-slim
 
 SHELL ["/bin/bash", "-c"]
 RUN echo "deb http://deb.debian.org/debian/ unstable main contrib non-free" >> /etc/apt/sources.list.d/debian.list
