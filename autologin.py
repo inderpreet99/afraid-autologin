@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
 import argparse
 import os
 import sys
@@ -52,7 +56,7 @@ def main(logger):
 
     args = parser.parse_args()
 
-    if args.headless:
+    if False: # args.headless:
         logger.debug('init virtual display')
         from pyvirtualdisplay import Display
         
@@ -62,6 +66,13 @@ def main(logger):
     logger.debug('init browser')
     if args.browser == 'phantomjs':
         browser = webdriver.PhantomJS()
+    elif args.browser == 'chrome':
+        options = Options()
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
+        if args.headless:
+            options.add_argument('--headless')
+        browser  =  webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options) 
     else:
         profile = webdriver.FirefoxProfile()
         profile.set_preference("browser.download.folderList", 2)
@@ -72,34 +83,34 @@ def main(logger):
     time.sleep(random.randint(1,3))
 
     logger.debug('navigating to login page')
-    browser.find_element_by_link_text("Domains").click()
+    browser.find_element("link text","Domains").click()
     time.sleep(random.randint(1,3))
 
     logger.debug('submit login form')
-    username_field = browser.find_element_by_name('username')
-    password_field = browser.find_element_by_name('password')
+    username_field = browser.find_element("name", 'username')
+    password_field = browser.find_element("name", 'password')
     username_field.send_keys(USERNAME)
     password_field.send_keys(PASSWORD)
-    browser.find_element_by_name('submit').click()
+    browser.find_element("name", 'submit').click()
     time.sleep(random.randint(1,3))
     logger.debug('extending account if dormant');
     browser.get(URL_DORMANT);
 
 #    https://freedns.afraid.org/dormant/
 #    https://freedns.afraid.org/dormant/?action=extend
-    buttons = browser.find_elements_by_xpath("//input[@type='submit']") 
+    buttons = browser.find_elements("xpath", "//input[@type='submit']") 
     logger.debug(buttons)
     for input in buttons:                                                             
     #print attribute name of each input element 
     #    print input.get_attribute('value')
        if input.get_attribute('value') == "Extend your account" :
-	        input.click()
-	        break
+                input.click()
+                break
     browser.get(URL_DORMANT_EXTEND);
  
     time.sleep(random.randint(1,3))
     # view the subdomains
-    browser.find_element_by_link_text("Subdomains").click()
+    browser.find_element("link text", "Subdomains").click()
 
     # check whether login was successful
     # 'Last IP' is only shown after login
@@ -110,7 +121,7 @@ def main(logger):
         logger.error('login unsuccessful')
 
     browser.quit()
-    if args.headless:
+    if 'display' in globals() :
         display.stop()
 
     exit_code = 0
