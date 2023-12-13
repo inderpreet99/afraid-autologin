@@ -2,6 +2,7 @@
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.common.by import By
 import argparse
 import os
 import sys
@@ -74,34 +75,34 @@ def main(logger):
     time.sleep(random.randint(1,3))
 
     logger.debug('navigating to login page')
-    browser.find_element_by_link_text("Domains").click()
+    browser.find_element(By.LINK_TEXT, "Domains").click()
     time.sleep(random.randint(1,3))
 
     logger.debug('submit login form')
-    username_field = browser.find_element_by_name('username')
-    password_field = browser.find_element_by_name('password')
+    username_field = browser.find_element(By.NAME, 'username')
+    password_field = browser.find_element(By.NAME, 'password')
     username_field.send_keys(USERNAME)
     password_field.send_keys(PASSWORD)
-    browser.find_element_by_name('submit').click()
+    browser.find_element(By.NAME, 'submit').click()
     time.sleep(random.randint(1,3))
     logger.debug('extending account if dormant');
     browser.get(URL_DORMANT);
 
 #    https://freedns.afraid.org/dormant/
 #    https://freedns.afraid.org/dormant/?action=extend
-    buttons = browser.find_elements_by_xpath("//input[@type='submit']") 
+    buttons = browser.find_elements(By.XPATH, "//input[@type='submit']")
     logger.debug(buttons)
     for input in buttons:                                                             
     #print attribute name of each input element 
     #    print input.get_attribute('value')
        if input.get_attribute('value') == "Extend your account" :
-	        input.click()
-	        break
+            input.click()
+            break
     browser.get(URL_DORMANT_EXTEND);
  
     time.sleep(random.randint(1,3))
     # view the subdomains
-    browser.find_element_by_link_text("Subdomains").click()
+    browser.find_element(By.LINK_TEXT, "Subdomains").click()
 
     # check whether login was successful
     # 'Last IP' is only shown after login
