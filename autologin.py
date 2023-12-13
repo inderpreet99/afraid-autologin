@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 from selenium import webdriver
+from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.firefox.options import Options
 import argparse
 import os
 import sys
@@ -63,10 +65,10 @@ def main(logger):
     if args.browser == 'phantomjs':
         browser = webdriver.PhantomJS()
     else:
-        profile = webdriver.FirefoxProfile()
-        profile.set_preference("browser.download.folderList", 2)
+        options = Options()
+        options.set_preference("browser.download.folderList", 2)
 
-        browser = webdriver.Firefox(firefox_profile=profile)
+        browser = webdriver.Firefox(options=options)
 
     browser.get(URL)
     time.sleep(random.randint(1,3))
