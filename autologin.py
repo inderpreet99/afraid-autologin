@@ -58,7 +58,7 @@ def main(logger):
     if args.headless:
         logger.debug('init virtual display')
         from pyvirtualdisplay import Display
-        
+
         display = Display(visible=0, size=(1366, 768))
         display.start()
 
@@ -75,7 +75,7 @@ def main(logger):
     time.sleep(random.randint(1,3))
 
     logger.debug('navigating to login page')
-    browser.find_element(By.LINK_TEXT, "Domains").click()
+    browser.find_element(By.LINK_TEXT, "Subdomains").click()
     time.sleep(random.randint(1,3))
 
     logger.debug('submit login form')
@@ -88,18 +88,18 @@ def main(logger):
     logger.debug('extending account if dormant');
     browser.get(URL_DORMANT);
 
-#    https://freedns.afraid.org/dormant/
-#    https://freedns.afraid.org/dormant/?action=extend
+    #    https://freedns.afraid.org/dormant/
+    #    https://freedns.afraid.org/dormant/?action=extend
     buttons = browser.find_elements(By.XPATH, "//input[@type='submit']")
     logger.debug(buttons)
-    for input in buttons:                                                             
-    #print attribute name of each input element 
+    for input in buttons:
+    #print attribute name of each input element
     #    print input.get_attribute('value')
        if input.get_attribute('value') == "Extend your account" :
             input.click()
             break
     browser.get(URL_DORMANT_EXTEND);
- 
+
     time.sleep(random.randint(1,3))
     # view the subdomains
     browser.find_element(By.LINK_TEXT, "Subdomains").click()
@@ -108,7 +108,7 @@ def main(logger):
     # 'Last IP' is only shown after login
     success = 'Last IP' in browser.page_source
     if success:
-        logger.info('login sucessful')
+        logger.info('login successful')
     else:
         logger.error('login unsuccessful')
 
